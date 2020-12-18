@@ -42,7 +42,7 @@ export class UserBusiness {
                 })
             )
 
-            const token = this.authenticator.generateToken({ id })
+            const token = this.authenticator.generateToken({ id, name })
             
             return token
         } catch (error) {
@@ -59,13 +59,8 @@ export class UserBusiness {
             if (!emailOrNickname || !password) {
                 throw new BaseError("Todos os campos são obrigatórios", 422)
             }
-
-            let user
-            if (emailOrNickname.includes("@")) {
-                user = await this.userDatabase.getUserByEmail(emailOrNickname)
-            } else {
-                user = await this.userDatabase.getUserByNickname(emailOrNickname)
-            }
+        
+            const user = await this.userDatabase.getUserByEmailOrNickname(emailOrNickname)
 
             if (!user) {
                 throw new BaseError("Usuário não encontrado ou dados inválidos", 422)
@@ -80,11 +75,12 @@ export class UserBusiness {
                 throw new BaseError("Senha inválida", 422)
             }
 
-            const accessToken = this.authenticator.generateToken({
-                id: user.getId()
+            const token = this.authenticator.generateToken({
+                id: user.getId(),
+                name: user.getName()
             })
             
-            return { accessToken }
+            return { token }
         } catch (error) {
             throw new BaseError(error.message, error.statusCode)
         }

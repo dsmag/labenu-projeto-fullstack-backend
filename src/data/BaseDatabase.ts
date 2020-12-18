@@ -6,7 +6,9 @@ export abstract class BaseDatabase {
 
     protected tableNames = {
         users: "projeto_fullStack_users",
-        images: "projeto_fullStack_images"
+        tags: "projeto_fullStack_tags",
+        images: "projeto_fullStack_images",
+        imageTags: "projeto_fullStack_image_tags"
         
     }
 

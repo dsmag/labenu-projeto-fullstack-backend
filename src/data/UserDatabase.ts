@@ -2,7 +2,6 @@ import { BaseDatabase } from "./BaseDatabase";
 import { User } from "../model/User";
 
 export class UserDatabase extends BaseDatabase {
-    private static TABLE_NAME = "projeto_fullStack_users";
 
     public async createUser(
         user: User
@@ -16,35 +15,21 @@ export class UserDatabase extends BaseDatabase {
                     nickname: user.getNickname(),
                     password: user.getPassword()
                 })
-                .into(UserDatabase.TABLE_NAME);
+                .into(this.tableNames.users);
         } catch (error) {
             throw new Error(error.sqlMessage || error.message);
         }
     }
 
-    public async getUserByEmail(
-        email: string
+    public async getUserByEmailOrNickname(
+        input: string
     ): Promise<User> {
         try {
             const result = await this.getConnection()
                 .select("*")
                 .from(this.tableNames.users)
-                .where({ email })
-
-            return User.toUser(result[0])
-        } catch (error) {
-            throw new Error(error.sqlMessage || error.message);
-        }
-    }
-
-    public async getUserByNickname(
-        nickname: string
-    ): Promise<User> {
-        try {
-            const result = await this.getConnection()
-                .select("*")
-                .from(this.tableNames.users)
-                .where({ nickname })
+                .where({ email: input })
+                .orWhere({nickname: input})
 
             return User.toUser(result[0])
         } catch (error) {
