@@ -42,7 +42,7 @@ export class UserBusiness {
                 })
             )
 
-            const token = this.authenticator.generateToken({ id })
+            const token = this.authenticator.generateToken({ id, name })
             
             return token
         } catch (error) {
@@ -75,11 +75,12 @@ export class UserBusiness {
                 throw new BaseError("Senha inválida", 422)
             }
 
-            const accessToken = this.authenticator.generateToken({
-                id: user.getId()
+            const token = this.authenticator.generateToken({
+                id: user.getId(),
+                name: user.getName()
             })
             
-            return { accessToken }
+            return { token }
         } catch (error) {
             throw new BaseError(error.message, error.statusCode)
         }
